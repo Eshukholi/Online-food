@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>💳 Payment - FastFood Jalaun</title>
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    :root{--primary:#ff6b35;--success:#00b894;--dark:#2c3e50;--glass:rgba(255,255,255,0.95);}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:linear-gradient(135deg,#f8fafc,#e2e8f0);min-height:100vh;padding:1rem;}
+    
+    .payment-container{max-width:500px;margin:0 auto;background:var(--glass);backdrop-filter:blur(20px);border-radius:20px;box-shadow:0 20px 40px rgba(0,0,0,0.1);overflow:hidden;}
+    .header{padding:2rem 1.5rem;border-bottom:1px solid #e2e8f0;text-align:center;}
+    .header h1{font-size:1.8rem;color:var(--dark);margin-bottom:0.5rem;}
+    .header p{color:#666;font-size:0.95rem;}
+    
+    .order-summary{padding:1.5rem;border-bottom:1px solid #e2e8f0;}
+    .order-row{display:flex;justify-content:space-between;padding:0.75rem 0;font-size:1rem;}
+    .order-row.total{font-weight:bold;color:var(--primary);font-size:1.2rem;}
+    .customer-info{padding:1rem 1.5rem;background:#f8f9fa;border-bottom:1px solid #e2e8f0;}
+    .customer-row{display:flex;justify-content:space-between;align-items:center;padding:0.5rem 0;font-size:0.95rem;}
+    
+    /* QR Section with YOUR Image */
+    .qr-section{padding:1.5rem;text-align:center;border-top:1px solid #e2e8f0;}
+    .qr-title{font-weight:600;color:var(--dark);margin-bottom:1rem;}
+    .qr-container{background:#f8f9fa;padding:1.5rem;border-radius:15px;display:inline-block;box-shadow:0 8px 25px rgba(0,0,0,0.15);}
+    #your-qr-code{max-width:220px;height:220px;border-radius:12px;display:block;margin:0 auto;box-shadow:0 4px 15px rgba(0,0,0,0.2);}
+    .qr-amount{font-size:1.6rem;font-weight:bold;color:var(--primary);margin:1rem 0;}
+    .qr-upi{font-size:1rem;font-weight:600;color:var(--dark);margin-bottom:.5rem;}
+    .qr-instructions{font-size:.9rem;color:#666;line-height:1.4;}
+    
+    .actions{padding:1.5rem;text-align:center;border-top:1px solid #e2e8f0;}
+    .btn{display:block;width:100%;padding:1.25rem;font-size:1.1rem;font-weight:bold;border:none;border-radius:12px;cursor:pointer;transition:all 0.3s ease;margin-bottom:0.75rem;}
+    .btn-primary{background:linear-gradient(135deg,var(--primary),#e55a2b);color:white;}
+    .btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 25px rgba(255,107,53,0.4);}
+    .btn-secondary{background:#f8f9fa;color:var(--dark);border:2px solid #e2e8f0;}
+    .btn-secondary:hover{background:var(--dark);color:white;}
+    
+    @media(max-width:480px){.payment-container{margin:0;border-radius:15px;}.header{padding:1.5rem 1rem;}.qr-container{padding:1rem;}}
+    
+    .modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:1000;justify-content:center;align-items:center;}
+    .modal-overlay.show{display:flex;}
+    .modal-content{background:white;padding:2.5rem;border-radius:20px;text-align:center;max-width:90%;box-shadow:0 20px 40px rgba(0,0,0,0.3);}
+    .modal-content i{font-size:4rem;color:var(--success);margin-bottom:1rem;}
+  </style>
+</head>
+<body>
+  <div class="payment-container">
+    <div class="header">
+      <h1>💳 Scan & Pay</h1>
+      <p>FastFood Jalaun • UPI QR Payment</p>
+    </div>
+
+    <div class="order-summary">
+      <div class="order-row">
+        <span>Items (<span id="item-count">0</span>):</span>
+        <span id="subtotal">₹0</span>
+      </div>
+      <div class="order-row">
+        <span>Delivery:</span>
+        <span>FREE</span>
+      </div>
+      <hr>
+      <div class="order-row total">
+        <span>Total:</span>
+        <span id="total-amount">₹0</span>
+      </div>
+    </div>
+
+    <div class="customer-info">
+      <div class="customer-row">
+        <span>📱 <strong id="customer-phone">Loading...</strong></span>
+        <span>Order #<span id="order-id">FF-001</span></span>
+      </div>
+    </div>
+
+    <!-- YOUR UPLOADED QR CODE -->
+    <div class="qr-section">
+      <div class="qr-title">📱 Scan with Any UPI App</div>
+      <div class="qr-container">
+        <img src="qr.jpeg" alt="FastFood Jalaun UPI QR" id="your-qr-code" [file:56]>
+        <div class="qr-amount" id="qr-amount">₹0</div>
+        <div class="qr-upi">fastfoodjalaun@paytm</div>
+        <div class="qr-instructions">
+          PhonePe • Google Pay • Paytm • BHIM<br>
+          Open app → Scan → Enter amount → Pay → Confirm
+        </div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button id="confirm-btn" class="btn btn-primary" disabled>✅ Payment Done - Confirm Order</button>
+      <button class="btn btn-secondary" onclick="history.back()">
+        <i class='bx bx-arrow-back'></i> ← Edit Order
+      </button>
+    </div>
+  </div>
+
+  <!-- Success Modal -->
+  <div id="success-modal" class="modal-overlay">
+    <div class="modal-content">
+      <i class='bx bx-check-circle'></i>
+      <h3>✅ Order Confirmed!</h3>
+      <p>Payment received! WhatsApp sent 📱<br>Preparing your order... ETA 25 mins 🚚</p>
+      <div style="margin-top:1.5rem;gap:1rem;">
+        <button onclick="location.href='index.html'" class="btn btn-primary" style="width:100%;margin-bottom:.5rem;">🍔 New Order</button>
+        <button onclick="trackDelivery()" class="btn btn-secondary" style="width:100%;">📍 Track Delivery</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ✅ YOUR QR CODE + DYNAMIC AMOUNT DISPLAY [file:56]
+    class PaymentManager {
+      constructor() {
+        this.SHOP_WHATSAPP = '7081610695'; // UPDATE YOUR NUMBER
+        this.init();
+      }
+
+      init() {
+        this.loadCartData();
+        this.bindEvents();
+      }
+
+      loadCartData() {
+        try {
+          const cart = JSON.parse(localStorage.getItem('fastfood_cart') || '[]');
+          const customer = JSON.parse(localStorage.getItem('customer_details') || '{}');
+          
+          let total = 0, itemCount = 0;
+          cart.forEach(item => {
+            const price = parseFloat(item.price) || 0;
+            total += price * (item.quantity || 1);
+            itemCount++;
+          });
+          
+          this.total = Math.round(total);
+          this.customer = customer;
+          this.orderId = `FF${Date.now().toString().slice(-6)}`;
+
+          // Update all displays
+          document.getElementById('item-count').textContent = itemCount;
+          document.getElementById('subtotal').textContent = `₹${total.toLocaleString()}`;
+          document.getElementById('total-amount').textContent = `₹${total.toLocaleString()}`;
+          document.getElementById('qr-amount').textContent = `₹${total.toLocaleString()}`;
+          document.getElementById('customer-phone').textContent = customer.phone || 'Enter phone';
+          document.getElementById('order-id').textContent = this.orderId;
+
+          // Enable confirm button
+          document.getElementById('confirm-btn').disabled = false;
+          
+          console.log('✅ Loaded:', itemCount, 'items ₹' + total, '| QR Ready [file:56]');
+        } catch(e) {
+          console.error('Cart load error:', e);
+        }
+      }
+
+      bindEvents() {
+        document.getElementById('confirm-btn').onclick = () => {
+          this.confirmPayment();
+        };
+      }
+
+      confirmPayment() {
+        // Save order
+        const orderData = {
+          orderId: this.orderId,
+          total: this.total,
+          customer: this.customer,
+          cart: JSON.parse(localStorage.getItem('fastfood_cart') || '[]'),
+          status: 'confirmed',
+          timestamp: new Date().toISOString()
+        };
+        localStorage.setItem('last_order', JSON.stringify(orderData));
+
+        // Send WhatsApp confirmation
+        this.sendWhatsAppConfirmation();
+
+        // Show success modal
+        document.getElementById('success-modal').classList.add('show');
+      }
+
+      sendWhatsAppConfirmation() {
+        const message = `✅ *Order ${this.orderId} CONFIRMED!*
+
+🍔 *FastFood Jalaun*
+💰 Paid: ₹${this.total}
+📱 ${this.customer.phone}
+📍 ${this.customer.address || 'Address'}
+
+🔥 Preparing your order...
+⏰ ETA: 25 minutes 🚚
+
+*Track:* tapatag.co/fastfood-track`;
+        
+        const whatsappURL = `https://wa.me/${this.SHOP_WHATSAPP}?text=${encodeURIComponent(message)}`;
+        window.open(whatsappURL, '_blank');
+      }
+    }
+
+    function trackDelivery() {
+      const order = JSON.parse(localStorage.getItem('last_order') || '{}');
+      alert(`📍 Live Tracking\n\nOrder: ${order.orderId}\nStatus: Preparing\nETA: 25 mins\n\n🔗 maps.app.goo.gl/jalaun-delivery`);
+    }
+
+    // Auto start
+    new PaymentManager();
+    window.addEventListener('storage', () => location.reload());
+  </script>
+</body>
+</html>
