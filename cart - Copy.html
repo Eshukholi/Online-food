@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🛒 Cart - FastFood Jalaun</title>
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+  <style>
+    /* COMPLETE NAVBAR + CART CSS - CHECKOUT SYNC FIXED */
+    *{margin:0;padding:0;box-sizing:border-box;}
+    :root{--primary:#ff6b35;--success:#00b894;--error:#ff4757;--dark:#2c3e50;--light:#f8f9fa;}
+    body{font-family:system-ui;background:linear-gradient(135deg,var(--light),#e2e8f0);min-height:100vh;}
+    
+    /* Navbar */
+    .navbar{background:rgba(255,255,255,.95);backdrop-filter:blur(20px);box-shadow:0 8px 32px rgba(0,0,0,.1);position:sticky;top:0;z-index:100;padding:1rem 5%;}
+    .nav-brand a{font-size:1.8rem;font-weight:800;color:var(--primary);text-decoration:none;}
+    .nav-brand span{color:var(--dark);}.nav-menu{display:flex;list-style:none;gap:2rem;margin-left:auto;}
+    .nav-menu a{color:var(--dark);text-decoration:none;padding:.5rem 1rem;border-radius:50px;transition:.3s;}
+    .nav-menu a.active,.nav-menu a:hover{background:var(--primary);color:white;}
+    
+    .cart-container{max-width:1200px;margin:2rem auto;padding:0 5%;display:grid;grid-template-columns:1fr 320px;gap:2rem;}
+    
+    /* Cart Items */
+    .cart-items{background:rgba(255,255,255,.9);backdrop-filter:blur(20px);border-radius:20px;padding:2rem;box-shadow:0 8px 32px rgba(0,0,0,.1);border:1px solid rgba(255,255,255,.2);}
+    .cart-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem;}
+    .cart-header h2{color:var(--dark);font-size:1.8rem;}
+    .empty-cart{text-align:center;padding:3rem;color:#64748b;}
+    .empty-cart i{font-size:4rem;color:#cbd5e1;margin-bottom:1rem;}
+    
+    .cart-item{background:white;border-radius:16px;padding:1.5rem;margin-bottom:1rem;box-shadow:0 4px 20px rgba(0,0,0,.08);display:flex;gap:1rem;align-items:center;transition:.3s;}
+    .cart-item:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,0,0,.15);}
+    .item-image{width:80px;height:80px;border-radius:12px;object-fit:cover;box-shadow:0 4px 15px rgba(0,0,0,.1);}
+    .item-details{flex:1;}
+    .item-name{font-size:1.3rem;font-weight:700;color:var(--dark);margin-bottom:.25rem;}
+    .item-price{font-size:1.1rem;color:var(--primary);font-weight:600;margin-bottom:.5rem;}
+    
+    /* Quantity Controls */
+    .quantity-controls{display:flex;align-items:center;background:#f8f9fa;border-radius:50px;padding:.5rem 1rem;gap:.5rem;}
+    .qty-btn{background:var(--primary);color:white;width:36px;height:36px;border-radius:50%;border:none;cursor:pointer;font-size:1.2rem;font-weight:600;transition:.2s;}
+    .qty-btn:hover{transform:scale(1.1);}
+    .qty-display{background:white;border:2px solid #e2e8f0;border-radius:8px;width:50px;text-align:center;font-weight:600;padding:.25rem;}
+    .remove-item{color:var(--error);background:none;border:none;font-size:1.5rem;cursor:pointer;transition:.2s;}
+    .remove-item:hover{transform:scale(1.2);}
+    
+    /* Summary - CHECKOUT SYNC */
+    .cart-summary{background:rgba(255,255,255,.9);backdrop-filter:blur(20px);border-radius:20px;padding:2rem;box-shadow:0 8px 32px rgba(0,0,0,.1);border:1px solid rgba(255,255,255,.2);}
+    .summary-title{color:var(--dark);font-size:1.3rem;margin-bottom:1.5rem;}
+    .summary-row{display:flex;justify-content:space-between;padding:1rem 0;font-size:1rem;border-bottom:1px solid #e2e8f0;}
+    .summary-row:last-child{border-bottom:none;font-weight:700;font-size:1.4rem;color:var(--primary);}
+    .btn-proceed{background:linear-gradient(135deg,var(--success),#00a085);color:white;border:none;padding:1.25rem 2rem;border-radius:12px;font-size:1.1rem;font-weight:600;cursor:pointer;width:100%;margin-top:1.5rem;transition:.3s;}
+    .btn-proceed:hover{transform:translateY(-2px);box-shadow:0 12px 35px rgba(0,184,148,.4);}
+    .btn-proceed:disabled{opacity:.6;cursor:not-allowed;transform:none;background:var(--error);}
+    
+    @media(max-width:768px){.cart-container{grid-template-columns:1fr;gap:1.5rem;}.cart-item{flex-direction:column;text-align:center;gap:1rem;}}
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="nav-brand"><a href="index.html">Fast<span>Food</span> Jalaun</a></div>
+    <ul class="nav-menu">
+      <li><a href="menu.html">🍔 Menu</a></li>
+      <li><a href="cart.html" class="active">🛒 Cart</a></li>
+      <li><a href="checkout.html">📋 Checkout</a></li>
+      <li><a href="payment.html">💳 Payment</a></li>
+    </ul>
+  </nav>
+
+  <div class="cart-container">
+    <!-- Cart Items -->
+    <div class="cart-items">
+      <div class="cart-header">
+        <h2>🛒 Your Cart (<span id="cart-count">0</span>)</h2>
+      </div>
+      <div id="cart-items-list"></div>
+    </div>
+
+    <!-- Order Summary - Passes to Checkout -->
+    <div class="cart-summary">
+      <h3 class="summary-title">💰 Order Summary</h3>
+      <div class="summary-row">
+        <span>Items Subtotal:</span>
+        <span id="subtotal">₹0</span>
+      </div>
+      <div class="summary-row">
+        <span>Delivery Charge:</span>
+        <span>FREE</span>
+      </div>
+      <hr style="margin:1rem 0;">
+      <div class="summary-row">
+        <span>Total Amount:</span>
+        <span id="grand-total">₹0</span>
+      </div>
+      <button id="proceed-checkout-btn" class="btn-proceed" onclick="proceedToCheckout()" disabled>
+        📋 Proceed to Checkout
+      </button>
+      <p style="text-align:center;margin-top:1rem;color:var(--success);font-size:.9rem;">→ Checkout page will show all items + amount</p>
+    </div>
+  </div>
+
+  <script>
+    // ✅ FIXED: Cart → Checkout Perfect Sync (Same localStorage key)
+    class CartManager {
+      constructor() {
+        this.cart = [];
+        this.init();
+      }
+
+      init() {
+        this.loadCart();
+        this.render();
+        window.cartManager = this; // Global access
+      }
+
+      loadCart() {
+        try {
+          // ✅ SAME KEY as checkout.html ('fastfood_cart')
+          const data = localStorage.getItem('fastfood_cart') || '[]';
+          this.cart = JSON.parse(data);
+        } catch(e) {
+          console.error('Cart load failed:', e);
+          this.cart = [];
+        }
+      }
+
+      saveCart() {
+        localStorage.setItem('fastfood_cart', JSON.stringify(this.cart));
+      }
+
+      render() {
+        const itemsContainer = document.getElementById('cart-items-list');
+        const countSpan = document.getElementById('cart-count');
+        
+        if (this.cart.length === 0) {
+          itemsContainer.innerHTML = `
+            <div class="empty-cart">
+              <i class='bx bx-cart' style="font-size:6rem;color:#e2e8f0;"></i>
+              <h3 style="margin:1rem 0;color:var(--dark);">Your cart is empty</h3>
+              <p>Add delicious items from <a href="menu.html" style="color:var(--primary);font-weight:600;">🍔 Menu</a></p>
+            </div>
+          `;
+          this.updateSummary(0);
+          return;
+        }
+
+        itemsContainer.innerHTML = this.cart.map((item, index) => {
+          const price = parseFloat(item.price) || 0;
+          const qty = parseInt(item.quantity) || 1;
+          const lineTotal = Math.round(price * qty);
+          const img = item.img || 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300&h=300&fit=crop';
+          return `
+            <div class="cart-item" data-index="${index}">
+              <img src="${img}" alt="${item.name}" class="item-image" onerror="this.src='https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300&h=300&fit=crop'">
+              <div class="item-details">
+                <div class="item-name">${item.name}</div>
+                <div style="color:#64748b;font-size:.95rem;">₹${price.toLocaleString()} × ${qty}</div>
+              </div>
+              <div class="quantity-controls">
+                <button class="qty-btn" onclick="cartManager.changeQty(${index}, -1)">−</button>
+                <div class="qty-display">${qty}</div>
+                <button class="qty-btn" onclick="cartManager.changeQty(${index}, 1)">+</button>
+              </div>
+              <button class="remove-item" onclick="cartManager.deleteItem(${index})" title="Remove item">
+                <i class='bx bx-trash'></i>
+              </button>
+              <div style="font-weight:700;color:var(--primary);font-size:1.2rem;min-width:80px;">
+                ₹${lineTotal.toLocaleString()}
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        countSpan.textContent = this.cart.reduce((sum, item) => sum + (parseInt(item.quantity) || 1), 0);
+        this.updateSummary();
+      }
+
+      changeQty(index, delta) {
+        if (index < 0 || index >= this.cart.length) return;
+        const item = this.cart[index];
+        item.quantity = Math.max(1, (parseInt(item.quantity) || 1) + delta);
+        this.saveCart();
+        this.render();
+      }
+
+      deleteItem(index) {
+        this.cart.splice(index, 1);
+        this.saveCart();
+        this.render();
+      }
+
+      updateSummary() {
+        let total = 0;
+        this.cart.forEach(item => {
+          total += parseFloat(item.price || 0) * (parseInt(item.quantity) || 1);
+        });
+        total = Math.round(total);
+        
+        document.getElementById('subtotal').textContent = `₹${total.toLocaleString()}`;
+        document.getElementById('grand-total').textContent = `₹${total.toLocaleString()}`;
+        
+        const btn = document.getElementById('proceed-checkout-btn');
+        if (total > 0) {
+          btn.disabled = false;
+          btn.innerHTML = `📋 Proceed to Checkout<br><small>₹${total.toLocaleString()} - Items will show in checkout</small>`;
+        } else {
+          btn.disabled = true;
+          btn.textContent = '📋 Proceed to Checkout';
+        }
+      }
+    }
+
+    // ✅ Global proceed function → Checkout sync
+    function proceedToCheckout() {
+      const total = parseInt(document.getElementById('grand-total').textContent.replace(/[^0-9]/g, '')) || 0;
+      if (total <= 0 || cartManager.cart.length === 0) {
+        alert('🛒 Add items to cart first!');
+        return;
+      }
+      
+      // ✅ Passes cart + total to checkout.html (same localStorage key)
+      localStorage.setItem('order_total', total.toString());
+      console.log(`✅ Cart → Checkout: ${cartManager.cart.length} items, ₹${total}`);
+      location.href = 'checkout.html';
+    }
+
+    // Init
+    const cartManager = new CartManager();
+
+    // Sync from menu.html/other tabs
+    window.addEventListener('storage', () => cartManager.render());
+    setInterval(() => {
+      const newData = localStorage.getItem('fastfood_cart');
+      if (newData && newData !== JSON.stringify(cartManager.cart)) {
+        cartManager.init();
+      }
+    }, 500);
+  </script>
+</body>
+</html>

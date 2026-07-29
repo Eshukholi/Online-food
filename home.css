@@ -1,0 +1,96 @@
+/* Fast Food Delhi - COMPLETE CSS 2026 (home.css + cart.css) */
+/* Mobile-First Responsive | Animations | Cart Management | Modals | Razorpay Ready */
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; background: #fffbf6; overflow-x: hidden; }
+.container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+
+/* Navbar */
+.navbar { display: flex; justify-content: space-between; align-items: center; padding: 1rem 5%; background: linear-gradient(135deg, #ff6b35, #ff8c00); color: white; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 20px rgba(255,107,53,0.3); }
+.nav-brand { font-size: 1.8rem; font-weight: bold; }
+.nav-brand span { color: #ffd700; }
+.nav-brand a { color: white; text-decoration: none; }
+.nav-menu { display: flex; list-style: none; gap: 2rem; align-items: center; }
+.nav-menu a { color: white; text-decoration: none; padding: 0.5rem 1rem; border-radius: 25px; transition: all 0.3s; }
+.nav-menu a:hover, .nav-menu a.active { background: rgba(255,255,255,0.2); transform: translateY(-2px); }
+
+/* Hero */
+.hero { height: 100vh; background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.4)), url('https://images.unsplash.com/photo-1553979459-d2229ba7433b?w=1400') center/cover; display: flex; align-items: center; justify-content: center; text-align: center; color: white; }
+.hero-content h1 { font-size: clamp(3rem, 8vw, 6rem); margin-bottom: 1rem; text-shadow: 2px 2px 10px rgba(0,0,0,0.5); }
+.hero-content p { font-size: 1.4rem; margin-bottom: 2rem; opacity: 0.95; }
+.btn-order, .btn-add, .btn-checkout, .btn-clear { background: linear-gradient(135deg, #ff6b35, #ff8c00); color: white; border: none; padding: 1rem 2rem; border-radius: 50px; font-size: 1.1rem; cursor: pointer; transition: all 0.3s; font-weight: 600; box-shadow: 0 5px 15px rgba(255,107,53,0.4); }
+.btn-order:hover, .btn-add:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 10px 25px rgba(255,107,53,0.6); }
+.btn-clear { background: linear-gradient(135deg, #dc3545, #c82333); box-shadow: 0 5px 15px rgba(220,53,69,0.4); }
+.btn-clear:hover { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(220,53,69,0.6); }
+
+/* Menu Grid */
+.menu-section { padding: 5rem 0; background: #f8f9fa; }
+.menu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; }
+.food-card { background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.1); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+.food-card:hover { transform: translateY(-15px) rotateX(5deg); box-shadow: 0 25px 60px rgba(0,0,0,0.2); }
+.food-img { width: 100%; height: 220px; object-fit: cover; }
+.food-info { padding: 1.8rem; }
+.food-price { font-size: 1.8rem; font-weight: bold; color: #ff6b35; margin: 0.5rem 0; }
+
+/* Cart Section */
+.cart-section { padding: 5rem 0; min-height: 70vh; }
+.cart-content { max-width: 900px; margin: 0 auto; }
+.empty-cart { text-align: center; padding: 6rem 2rem; color: #999; }
+.empty-cart i { font-size: 8rem; margin-bottom: 2rem; opacity: 0.4; display: block; }
+.empty-cart a { color: #ff6b35; text-decoration: none; font-weight: 600; }
+.cart-item { display: flex; align-items: center; gap: 1.5rem; padding: 2rem; background: white; border-radius: 20px; margin-bottom: 1.5rem; box-shadow: 0 10px 30px rgba(0,0,0,0.08); transition: all 0.3s; }
+.cart-item:hover { box-shadow: 0 15px 40px rgba(0,0,0,0.12); transform: translateY(-2px); }
+.cart-item img { width: 90px; height: 90px; border-radius: 15px; object-fit: cover; flex-shrink: 0; }
+.cart-item-info h4 { margin: 0 0 0.3rem 0; font-size: 1.3rem; }
+.cart-item-price { color: #666; font-size: 1rem; }
+.line-total { font-size: 1.4rem; font-weight: bold; color: #ff6b35; margin-top: 0.3rem; }
+.qty-controls { display: flex; align-items: center; gap: 0.8rem; background: linear-gradient(135deg, #f8f9fa, #e9ecef); padding: 0.8rem 1.5rem; border-radius: 30px; }
+.qty-btn { width: 42px; height: 42px; border: none; background: #ff6b35; color: white; border-radius: 50%; cursor: pointer; font-size: 1.3rem; font-weight: bold; transition: all 0.2s; box-shadow: 0 3px 10px rgba(255,107,53,0.3); }
+.qty-btn:hover { transform: scale(1.1); box-shadow: 0 5px 15px rgba(255,107,53,0.4); }
+.qty { font-size: 1.4rem; font-weight: bold; min-width: 30px; text-align: center; }
+.btn-remove { background: #dc3545; color: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; font-size: 1.4rem; margin-left: auto; box-shadow: 0 4px 12px rgba(220,53,69,0.3); transition: all 0.2s; }
+.btn-remove:hover { transform: scale(1.1); box-shadow: 0 6px 18px rgba(220,53,69,0.4); }
+.cart-summary { background: linear-gradient(135deg, #f8f9fa, white); padding: 2.5rem; border-radius: 20px; margin: 3rem 0; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+.summary-row { display: flex; justify-content: space-between; font-size: 1.3rem; margin-bottom: 1.2rem; }
+.summary-row:last-child { font-size: 2.2rem; font-weight: 800; color: #ff6b35; border-top: 3px solid #ff6b35; padding-top: 1.5rem; text-shadow: 1px 1px 2px rgba(0,0,0,0.1); }
+.checkout-buttons { display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap; margin-top: 2rem; }
+
+/* Modals */
+.modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); animation: fadeIn 0.3s; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.modal-content { background: white; margin: 15% auto; padding: 3rem; width: 90%; max-width: 450px; border-radius: 25px; position: relative; box-shadow: 0 25px 80px rgba(0,0,0,0.3); transform: scale(0.9); animation: modalPop 0.4s forwards; }
+@keyframes modalPop { to { transform: scale(1); } }
+.modal-content h2 { text-align: center; margin-bottom: 2rem; color: #333; }
+.modal-content form { display: flex; flex-direction: column; gap: 1.5rem; }
+.modal-content input { padding: 1.2rem; border: 2px solid #e9ecef; border-radius: 15px; font-size: 1.1rem; transition: all 0.3s; }
+.modal-content input:focus { outline: none; border-color: #ff6b35; box-shadow: 0 0 0 3px rgba(255,107,53,0.1); }
+.close { position: absolute; right: 1.5rem; top: 1.5rem; font-size: 2.5rem; cursor: pointer; color: #999; transition: color 0.3s; }
+.close:hover { color: #ff6b35; transform: rotate(90deg); }
+
+/* Footer */
+.footer { background: linear-gradient(135deg, #333, #222); color: white; padding: 4rem 0 2rem; }
+.footer-content { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 2rem; }
+.footer-brand { font-size: 1.8rem; font-weight: bold; }
+.footer-links { display: flex; gap: 2.5rem; flex-wrap: wrap; }
+.footer-links a { color: #ff6b35; text-decoration: none; font-weight: 600; font-size: 1.1rem; transition: all 0.3s; }
+.footer-links a:hover { color: #ffd700; transform: translateY(-2px); }
+.footer p { text-align: center; margin-top: 2rem; opacity: 0.8; }
+
+/* Responsive */
+@media (max-width: 1024px) { .nav-menu { gap: 1rem; } }
+@media (max-width: 768px) {
+  .navbar { flex-direction: column; gap: 1rem; padding: 1rem; }
+  .nav-menu { flex-wrap: wrap; justify-content: center; gap: 1rem; }
+  .cart-item { flex-direction: column; text-align: center; gap: 1rem; }
+  .checkout-buttons { flex-direction: column; }
+  .footer-content { flex-direction: column; text-align: center; }
+  .modal-content { margin: 20% auto; padding: 2rem; }
+}
+@media (max-width: 480px) {
+  .cart-item img { width: 70px; height: 70px; }
+  .qty-controls { flex-wrap: wrap; }
+}
+
+/* Utilities */
+@keyframes slideDown { from { transform: translateY(-30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+section { animation: slideDown 0.8s ease-out; }

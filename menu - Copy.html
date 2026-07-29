@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🍔 Menu - FastFood Jalaun</title>
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+  <style>
+    /* COMPLETE INLINE CSS - No External Files Needed */
+    * { box-sizing: border-box; }
+    body { font-family: Arial, sans-serif; margin: 0; background: #f8f9fa; }
+
+    /* NAVBAR */
+    .navbar { background: linear-gradient(135deg, #ff6b35, #f7931e); padding: 1rem 2rem; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1000; }
+    .nav-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+    .nav-logo a { color: white; font-size: 1.5rem; font-weight: bold; text-decoration: none; }
+    .nav-menu { display: flex; list-style: none; margin: 0; padding: 0; }
+    .nav-item { margin-left: 2rem; }
+    .nav-link { color: white; text-decoration: none; font-weight: 500; transition: all 0.3s; position: relative; }
+    .nav-link:hover, .nav-link.active { color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.5); }
+    .cart-badge { background: #ffeb3b; color: #333; border-radius: 50%; padding: 0.2rem 0.5rem; font-size: 0.8rem; font-weight: bold; min-width: 1.2rem; height: 1.2rem; display: inline-flex; align-items: center; justify-content: center; position: absolute; top: -8px; right: -12px; }
+    .hamburger { display: none; flex-direction: column; cursor: pointer; }
+    .hamburger .bar { width: 25px; height: 3px; background: white; margin: 3px 0; transition: 0.3s; }
+    .home-btn, .menu-btn, .payment-btn { background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); padding: 0.5rem 1rem; border-radius: 20px; }
+    .home-btn:hover, .menu-btn:hover, .payment-btn:hover { background: rgba(255,255,255,0.3); transform: scale(1.05); }
+
+    /* MOBILE NAVBAR */
+    @media (max-width: 768px) {
+      .nav-menu { position: fixed; top: 70px; left: -100%; width: 100%; height: calc(100vh - 70px); background: linear-gradient(135deg, #ff6b35, #f7931e); flex-direction: column; justify-content: flex-start; align-items: center; padding-top: 2rem; transition: 0.3s; box-shadow: 0 10px 27px rgba(0,0,0,0.05); }
+      .nav-menu.active { left: 0; }
+      .nav-item { margin: 1rem 0; width: 100%; text-align: center; }
+      .hamburger { display: flex; }
+    }
+
+    /* HERO + FILTERS */
+    .menu-hero { background: linear-gradient(135deg, #ff6b35, #f7931e); color: white; text-align: center; padding: 4rem 2rem; }
+    .filter-section { margin: 2rem 0; }
+    .filter-buttons { max-width: 1200px; margin: 0 auto; padding: 0 2rem; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+    .filter-btn { background: white; border: 2px solid #ff6b35; color: #ff6b35; padding: 0.7rem 1.5rem; border-radius: 25px; cursor: pointer; font-weight: 500; transition: all 0.3s; box-shadow: 0 4px 15px rgba(255,107,53,0.2); }
+    .filter-btn:hover, .filter-btn.active { background: linear-gradient(135deg, #ff6b35, #f7931e); color: white; transform: translateY(-2px); box-shadow: 0 8px 25px rgba(255,107,53,0.4); }
+
+    /* MENU GRID */
+    .menu-grid { max-width: 1200px; margin: 2rem auto; padding: 0 2rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+    .food-card { background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1); transition: transform 0.3s; }
+    .food-card:hover { transform: translateY(-10px); }
+    .food-img { height: 200px; width: 100%; object-fit: cover; background: #ddd; }
+    .food-info { padding: 1.5rem; }
+    .food-name { font-size: 1.4rem; font-weight: bold; margin: 0 0 0.5rem 0; }
+    .food-price { font-size: 1.2rem; color: #ff6b35; font-weight: bold; }
+    .add-btn { background: linear-gradient(135deg, #ff6b35, #f7931e); color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 25px; cursor: pointer; font-size: 1rem; width: 100%; margin-top: 1rem; transition: all 0.3s; }
+    .add-btn:hover { transform: scale(1.05); }
+    .category-badge { display: inline-block; padding: 0.2rem 0.5rem; border-radius: 12px; font-size: 0.8rem; margin-bottom: 0.5rem; }
+    .veg { background: #4caf50; color: white; }
+    .non-veg { background: #f44336; color: white; }
+    .hidden { display: none !important; }
+    .loading { grid-column: 1 / -1; text-align: center; padding: 3rem; font-size: 1.2rem; color: #666; }
+
+    @media (max-width: 768px) { .menu-grid { grid-template-columns: 1fr; padding: 0 1rem; } }
+  </style>
+</head>
+<body>
+  <!-- NAVBAR: Home + Menu + Payment -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="nav-logo"><a href="index.html">🍔 FastFood Jalaun</a></div>
+      <ul class="nav-menu">
+        <li class="nav-item"><a href="index.html" class="nav-link home-btn" data-page="home">🏠 Home</a></li>
+        <li class="nav-item"><a href="menu.html" class="nav-link menu-btn active" data-page="menu">🍔 Menu</a></li>
+        <li class="nav-item"><a href="cart.html" class="nav-link" data-page="cart">🛒 Cart <span id="cart-count" class="cart-badge" style="display:none;">0</span></a></li>
+        <li class="nav-item"><a href="checkout.html" class="nav-link" data-page="checkout">📋 Checkout</a></li>
+        <li class="nav-item"><a href="payment.html" class="nav-link payment-btn" data-page="payment">💳 Payment</a></li>
+      </ul>
+      <div class="hamburger">
+        <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+      </div>
+    </div>
+  </nav>
+
+  <section class="menu-hero">
+    <h1>🍔 FastFood Menu</h1>
+    <p>Best Jalaun Street Food - Fresh & Hot! 🌱 Veg or 🍗 Non-Veg Filter</p>
+  </section>
+
+  <!-- FILTER BUTTONS -->
+  <section class="filter-section">
+    <div class="filter-buttons">
+      <button class="filter-btn active" data-filter="all">🍽️ All (12)</button>
+      <button class="filter-btn" data-filter="veg">🌱 Veg (7)</button>
+      <button class="filter-btn" data-filter="non-veg">🍗 Non-Veg (5)</button>
+    </div>
+  </section>
+
+  <div class="menu-grid" id="menu-grid">
+    <div class="loading">🔥 Loading Jalaun Specials...</div>
+  </div>
+
+  <!-- COMPLETE INLINE JS - No External Files -->
+  <script>
+    // MENU DATA + FILTER LOGIC
+    const menuItems = [
+      {id:1,name:'Chicken Biryani',price:120,img:'Chicken Biryani.jpg',category:'non-veg'},
+      {id:2,name:'Veg Samosa (2pcs)',price:40,img:'veg samosa.jpg',category:'veg'},
+      {id:3,name:'Paneer Chilli (Dry)',price:150,img:'Paneer Chilli (Dry).jpg',category:'veg'},
+      {id:4,name:'Chicken Roll',price:80,img:'Chicken Roll.jpg',category:'non-veg'},
+      {id:5,name:'paneer tikka roll',price:30,img:'paneer tikka roll.jpg',category:'veg'},
+      {id:6,name:'oreo milkshake (8pcs)',price:35,img:'oreo milkshake.jpg',category:'veg'},
+      {id:7,name:'Butter Chicken',price:180,img:'butter chicken.jpg',category:'non-veg'},
+      {id:8,name:'veg cheese burger',price:60,img:'veg cheese burger.jpg',category:'veg'},
+      {id:9,name:'Chicken 65',price:140,img:'chicken 65.jpg',category:'non-veg'},
+      {id:10,name:'french fries regular',price:50,img:'french fries regular.jpg',category:'veg'},
+      {id:11,name:'chicken fried rice',price:200,img:'chicken fried rice.jpg',category:'non-veg'},
+      {id:12,name:'cold coffee',price:15,img:'cold coffee.jpg',category:'veg'},
+      {id:13,name:'paneer dosa',price:130,img:'paneer dosa.jpg',category:'veg'},
+      {id:14,name:'dosa',price:110,img:'dosa.jpg',category:'veg'},
+      {id:15,name:'normal pizza',price:140,img:'normal pizza.jpg',category:'veg'},
+      {id:16,name:'paneer pizza',price:90,img:'paneer pizza.jpg',category:'veg'},
+      {id:17,name:'veg biryani',price:70,img:'veg biryani.jpg',category:'veg'},
+      {id:18,name:'Litti chokha',price:160,img:'Litti chokha.jpg',category:'veg'},
+      { id:19,name:'Noodles',price:220,img:'Noodles.jpg',category:'non-veg'},
+      {id:20,name:'Momos',price:130,img:'Momos.jpg',category:'veg'},
+      { id:21,name:'Chicken Wings',price:180,img:'Chicken Wings.jpg',category:'non-veg'},
+      { id:22,name:'Veg Manchurian',price:140,img:'Veg Manchurian.jpg',category:'veg'},
+      { id:23,name:'Chicken Shawarma',price:150,img:'Chicken Shawarma.jpg',category:'non-veg'},
+      {id:24,name:'Veg Shawarma',price:120,img:'Veg Shawarma.jpg',category:'veg'},
+    {id: 25,name:'Fruit Salad',price:90,img:'Fruit Salad.jpg',category:'veg'},
+    {id: 26,name:'Egg Curry',price:110,img:'Egg Curry.jpg',category:'non-veg'},
+    {id: 27,name:'Aloo Paratha',price:50,img:'Aloo Paratha.jpg',category:'veg'},
+    {id: 28,name:'Chicken Nuggets',price:130,img:'Chicken Nuggets.jpg',category:'non-veg'},
+    {id: 29,name:'Veg Pulao',price:100,img:'Veg Pulao.jpg',category:'veg'},
+    {id: 30,name:'Chicken Tikka',price:170,img:'Chicken Tikka.jpg',category:'non-veg'},
+    {id: 31,name:'Masala Dosa',price:120,img:'Masala Dosa.jpg',category:'veg'},
+    {id: 32,name:'Veg Spring Rolls',price:80,img:'Veg Spring Rolls.jpg',category:'veg'}
+
+  ];
+
+    let currentFilter = 'all';
+
+    function renderMenu(filter = 'all') {
+      currentFilter = filter;
+      const grid = document.getElementById('menu-grid');
+      const filteredItems = filter === 'all' ? menuItems : menuItems.filter(item => item.category === filter);
+      grid.innerHTML = filteredItems.map(item => `
+        <div class="food-card ${item.category}">
+          <img src="${item.img}" alt="${item.name}" class="food-img" loading="lazy" onerror="this.src='https://via.placeholder.com/400x200/ddd?text=${item.name}'">
+          <div class="food-info">
+            <span class="category-badge ${item.category}">${item.category === 'veg' ? '🌱 VEG' : '🍗 NON-VEG'}</span>
+            <h3 class="food-name">${item.name}</h3>
+            <div class="food-price">₹${item.price}</div>
+            <button class="add-btn" onclick="addToCart(${item.id})">🛒 Add to Cart</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function addToCart(id) {
+      const item = menuItems.find(i => i.id === id);
+      let cart = JSON.parse(localStorage.getItem('fastfood_cart') || '[]');
+      const existing = cart.find(c => c.id === id);
+      if (existing) existing.quantity += 1; else cart.push({...item, quantity: 1});
+      localStorage.setItem('fastfood_cart', JSON.stringify(cart));
+      window.dispatchEvent(new CustomEvent('cartUpdated'));
+      showToast(`✅ ${item.name} added!`);
+    }
+
+    function showToast(message) {
+      const toast = document.createElement('div');
+      toast.textContent = message;
+      Object.assign(toast.style, {
+        position:'fixed', top:'80px', right:'20px', background:'rgba(76,175,80,0.95)',
+        color:'white', padding:'1rem 1.5rem', borderRadius:'25px', zIndex:'9999',
+        transform:'translateX(400px)', transition:'transform 0.3s', backdropFilter:'blur(10px)'
+      });
+      document.body.appendChild(toast);
+      setTimeout(() => toast.style.transform = 'translateX(0)', 10);
+      setTimeout(() => { toast.style.transform = 'translateX(400px)'; setTimeout(() => toast.remove(), 300); }, 2500);
+    }
+
+    // NAVBAR MANAGER
+    class NavManager {
+      constructor() { this.initNav(); this.updateCartCount(); }
+      initNav() {
+        const hamburger = document.querySelector('.hamburger');
+        const navMenu = document.querySelector('.nav-menu');
+        const navLinks = document.querySelectorAll('.nav-link');
+        hamburger?.addEventListener('click', () => { hamburger.classList.toggle('active'); navMenu.classList.toggle('active'); });
+        navLinks.forEach(link => link.addEventListener('click', () => { hamburger?.classList.remove('active'); navMenu.classList.remove('active'); this.setActiveLink(link); }));
+        this.setActiveLinkFromUrl();
+      }
+      setActiveLink(link) { document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active')); link.classList.add('active'); }
+      setActiveLinkFromUrl() {
+        const currentPage = window.location.pathname.split('/').pop() || 'menu.html';
+        const pageKey = currentPage.replace('.html', '');
+        const link = document.querySelector(`[data-page="${pageKey}"]`) || document.querySelector('[data-page="menu"]');
+        if (link) this.setActiveLink(link);
+      }
+      updateCartCount() {
+        try {
+          const cart = JSON.parse(localStorage.getItem('fastfood_cart') || '[]');
+          const totalItems = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
+          const badge = document.getElementById('cart-count');
+          if (badge) { badge.textContent = totalItems; badge.style.display = totalItems > 0 ? 'inline-flex' : 'none'; }
+        } catch (e) {}
+      }
+    }
+
+    // INIT
+    document.addEventListener('DOMContentLoaded', () => {
+      new NavManager();
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          renderMenu(btn.dataset.filter);
+        });
+      });
+      renderMenu();
+      document.querySelector('.loading')?.remove();
+    });
+    window.addEventListener('storage', () => new NavManager().updateCartCount());
+    window.addEventListener('cartUpdated', () => new NavManager().updateCartCount());
+  </script>
+</body>
+</html>
